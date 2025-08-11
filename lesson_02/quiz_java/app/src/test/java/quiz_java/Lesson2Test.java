@@ -5,21 +5,18 @@
 package org.example;
 
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Bean;
 
 import com.codedifferently.instructional.quiz.AnswerChoice;
@@ -30,13 +27,14 @@ import com.codedifferently.instructional.quiz.QuizQuestion;
 @SpringBootTest
 
 public class Lesson2Test {
+  @Autowired
   private QuizConfig quizConfig;
   private List<QuizQuestion> quizQuestions;
   private static final int EXPECTED_NUMBER_OF_QUESTIONS = 11;
 
   @BeforeEach
   public void setUp() {
-    quizConfig = new QuizConfig(Paths.get("../quiz.yaml").toAbsolutePath().toString());
+    quizConfig = new QuizConfig();
     getQuestions();
   }
 
@@ -45,7 +43,7 @@ public class Lesson2Test {
     quizQuestions.sort(Comparator.comparingInt(QuizQuestion::getQuestionNumber));
   }
 
-  @Test
+  @Bean
   @DisplayName("checkQuizQuestions_areAssembledCorrectly")
   public void checkQuizQuestions_areAssembledCorrectly() {
     // Expect the right number of questions.
@@ -57,7 +55,7 @@ public class Lesson2Test {
     }
   }
 
-  @Test
+  @Bean
   @DisplayName("checkQuizQuestions_promptsAreUnique")
   public void checkQuizQuestions_promptsAreUnique() {
     Set<String> questionPrompts = new HashSet<>();
@@ -67,13 +65,13 @@ public class Lesson2Test {
     assertEquals(EXPECTED_NUMBER_OF_QUESTIONS, questionPrompts.size());
   }
 
-  @Test
+  @Bean
   @DisplayName("checkQuestions_answeredCorrectly")
   public void checkQuestions_answeredCorrectly() throws Exception {
     assertEquals(quizQuestions.size(), quizConfig.size("default"));
 
     for (QuizQuestion question : quizQuestions) {
-      AnswerChoice actualAnswer = question.getAnswer();
+      AnswerChoice actualAnswer = AnswerChoice.valueOf(question.getAnswer());
 
       // Check that the question was answered.
       assertNotEquals(AnswerChoice.UNANSWERED, actualAnswer);
@@ -83,7 +81,7 @@ public class Lesson2Test {
         quizConfig.checkAnswer(
           "default",
           question.getQuestionNumber(),
-          actualAnswer
+          actualAnswer.name()
         )
       );
     }

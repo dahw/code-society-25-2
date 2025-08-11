@@ -33,7 +33,9 @@ dependencies {
 
 
 application {
-   // Define the main class for the application.
+   /*
+    * Define the main class for the application.
+    */
    mainClass.set("org.example.Lesson2")
 }
 

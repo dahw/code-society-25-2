@@ -7,10 +7,10 @@
 
 plugins {
     // Apply the foojay-resolver plugin to allow automatic download of JDKs
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-rootProject.name = 'quiz_java'
-include('app', 'instructional-lib')
-project(':instructional-lib').projectDir = file('../../../code-society-25-2/lib/java/codedifferently-instructional/instructional-lib')
+rootProject.name = "quiz_java"
+include("app", "instructional-lib")
+project(":instructional-lib").projectDir = file("../../../code-society-25-2/lib/java/codedifferently-instructional/instructional-lib")
 
