@@ -14,7 +14,13 @@ export function compareStrings(a: string, b: string): number {
 
   // TODO(you): Finish this method.
 
-  return 0;
+  if (distance > 0) {
+    return 1;
+  } else if (distance < 0) {
+    return -1; // Or any negative number as per the comment
+  } else {
+    return 0;
+  }
 }
 
 /**
@@ -24,7 +30,15 @@ export function compareStrings(a: string, b: string): number {
  * @return The factorial of n.
  */
 export function computeFactorial(n: number): number {
-  return 0;
+  if (n < 1) {
+    return 1;
+  } else {
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
+  }
 }
 
 /**
@@ -34,7 +48,17 @@ export function computeFactorial(n: number): number {
  * @return An array containing the first `n` Fibonacci values.
  */
 export function getFirstNFibonacciNumbers(n: number): number[] {
-  return [];
+  if (n <= 0) {
+    return [];
+  } else if (n === 1) {
+    return [1];
+  } else {
+    const fib: number[] = [1, 1];
+    while (fib.length < n) {
+      fib.push(fib[fib.length - 1] + fib[fib.length - 2]);
+    }
+    return fib.slice(0, n);
+  }
 }
 
 /**
@@ -59,11 +83,20 @@ export function binarySearch(
 
   const pivotIndex = Math.floor((start + end) / 2); // The index in the middle of the array.
 
-  // TODO(you): Finish implementing this algorithm
+  // TODO(you): Finish implementing this algorithm.
 
   // If values[pivotIndex] is equal to value then return `pivotIndex`.
-  // Else if values[pivotIndex] is greater than the value, then
-  // call `binarySearch(values, start, pivotIndex - 1, value)` and return its value;
-  // Else call `binarySearch(values, pivotIndex + 1, end, value)` and return its value.
+  if (values[pivotIndex] === value) {
+    return pivotIndex;
+
+    // Else if values[pivotIndex] is greater than the value, then
+  } else if (values[pivotIndex] > value) {
+    // call `binarySearch(values, start, pivotIndex - 1, value)` and return its value;
+    return binarySearch(values, start, pivotIndex - 1, value);
+  } else {
+    // Else call `binarySearch(values, pivotIndex + 1, end, value)` and return its value.
+    return binarySearch(values, pivotIndex + 1, end, value);
+  }
+  // If the value is not found, return -1.
   return -1;
 }
