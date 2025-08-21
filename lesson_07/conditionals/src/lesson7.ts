@@ -30,7 +30,10 @@ export function compareStrings(a: string, b: string): number {
  * @return The factorial of n.
  */
 export function computeFactorial(n: number): number {
-  if (n < 1) {
+  if (n < 0) {
+    return 0;
+  }
+  if (n === 0) {
     return 1;
   } else {
     let result = 1;

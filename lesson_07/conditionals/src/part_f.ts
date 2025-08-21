@@ -32,9 +32,9 @@ export function getLetterGrade(score: number): string {
  */
 export function sumEvenNumbers(numbers: number[]): number {
   let sum = 0;
-  for (let i = 0; i < numbers.length; i++) {
-    if (numbers[i] % 2 === 0) {
-      sum += numbers[i];
+  for (const num of numbers) {
+    if (num % 2 === 0) {
+      sum += num;
     }
   }
   return sum;
@@ -49,9 +49,8 @@ export function sumEvenNumbers(numbers: number[]): number {
  */
 export function countCharacter(text: string, character: string): number {
   let count = 0;
-
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === character) {
+  for (const char of text) {
+    if (char === character) {
       count++;
     }
   }
