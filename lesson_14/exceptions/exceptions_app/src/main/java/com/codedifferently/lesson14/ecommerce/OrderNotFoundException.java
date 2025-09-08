@@ -5,4 +5,12 @@
 
 package com.codedifferently.lesson14.ecommerce;
 
-class OrderNotFoundException {}
+public class OrderNotFoundException extends Exception {
+  public OrderNotFoundException(String orderId) {
+    super("Order with ID " + orderId + " not found");
+  }
+
+  public OrderNotFoundException(String orderId, String operation) {
+    super("Operation '" + operation + "' is not supported for order with ID " + orderId);
+  }
+}
