@@ -28,13 +28,11 @@ class EmployeeManagerTest {
     employeeManager.addEmployee(emp);
     employeeManager.removeEmployee(1);
     // After removal, getEmployee should throw or return null
-    // If you want to check for null, update EmployeeManager to return null if not found
-    // Here, we expect an exception
     try {
       employeeManager.getEmployee(1);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException e) {
-      // expected
+      // expected exception
     }
   }
 
