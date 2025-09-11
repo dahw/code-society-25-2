@@ -50,8 +50,10 @@ public class Employee {
   public String getDetails() {
     return details;
   }
+
   public String setDetails() {
-    this.details = "ID: " + id + ", Name: " + name + ", Department: " + department + ", Salary: " + salary;
+    this.details =
+        "ID: " + id + ", Name: " + name + ", Department: " + department + ", Salary: " + salary;
     return details;
   }
 }
