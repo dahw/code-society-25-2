@@ -1,6 +1,7 @@
+package com.codedifferently.lesson15;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codedifferently.lesson15.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +60,28 @@ class EmployeeTest {
 
   @Test
   void testGetDetails() {
+    employee.setDetails();
     String expected = "ID: 1, Name: Alice, Department: Engineering, Salary: 75000.0";
+    assertThat(employee.getDetails()).isEqualTo(expected);
+  }
+
+  @Test
+  void testSetDetails() {
+    employee.setId(3);
+    employee.setName("Charlie");
+    employee.setDepartment("Sales");
+    employee.setSalary(90000.0);
+    employee.setDetails();
+    String expected = "ID: 3, Name: Charlie, Department: Sales, Salary: 90000.0";
+    assertThat(employee.getDetails()).isEqualTo(expected);
+  }
+
+  @Test
+  void testSetandGetDetailsWithEmptyValues() {
+    employee.setName("");
+    employee.setDepartment("");
+    employee.setDetails();
+    String expected = "ID: 1, Name: , Department: , Salary: 75000.0";
     assertThat(employee.getDetails()).isEqualTo(expected);
   }
 }
