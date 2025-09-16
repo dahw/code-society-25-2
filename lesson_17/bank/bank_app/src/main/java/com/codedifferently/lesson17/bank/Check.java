@@ -41,11 +41,25 @@ public class Check {
   }
 
   /**
+   * Gets the amount of the check.
+   *
+   * @return The amount of the check.
+   */
+  public double getAmount() {
+    return amount;
+  }
+
+  /** Marks the check as deposited (same as voiding). */
+  public void markDeposited() {
+    voidCheck();
+  }
+
+  /**
    * Deposits the check into an account.
    *
    * @param toAccount The account to deposit the check into.
    */
-  public void depositFunds(CheckingAccount toAccount) {
+  public void depositFunds(Account toAccount) {
     if (isVoided) {
       throw new CheckVoidedException("Check is voided");
     }

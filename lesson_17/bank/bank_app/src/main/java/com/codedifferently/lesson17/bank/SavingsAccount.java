@@ -3,22 +3,21 @@ package com.codedifferently.lesson17.bank;
 import com.codedifferently.lesson17.bank.exceptions.InsufficientFundsException;
 import java.util.Set;
 
-/** Represents a checking account. */
-public class CheckingAccount implements Account {
-
+/** Represents a savings account that does not support check operations. */
+public class SavingsAccount implements Account {
   private final Set<Customer> owners;
   private final String accountNumber;
   private double balance;
   private boolean isActive;
 
   /**
-   * Creates a new checking account.
+   * Creates a new savings account.
    *
    * @param accountNumber The account number.
    * @param owners The owners of the account.
    * @param initialBalance The initial balance of the account.
    */
-  public CheckingAccount(String accountNumber, Set<Customer> owners, double initialBalance) {
+  public SavingsAccount(String accountNumber, Set<Customer> owners, double initialBalance) {
     this.accountNumber = accountNumber;
     this.owners = owners;
     this.balance = initialBalance;
@@ -40,6 +39,7 @@ public class CheckingAccount implements Account {
    *
    * @return The owners of the account.
    */
+  @Override
   public Set<Customer> getOwners() {
     return owners;
   }
@@ -58,11 +58,41 @@ public class CheckingAccount implements Account {
   }
 
   /**
+   * Override deposit to apply savings account restrictions
+   *
+   * @param amount The amount to deposit
+   * @throws IllegalStateException if the account is closed
+   * @throws UnsupportedOperationException if attempting a deposit over $10,000
+   */
+  @Override
+  public void deposit(double amount) throws IllegalStateException {
+    if (amount >= 10000) {
+      throw new UnsupportedOperationException(
+          "Savings accounts do not accept deposits over $10,000");
+    }
+    Account.super.deposit(
+        amount); // Use the interface's default implementation which handles validation
+  }
+
+  /**
+   * Override withdraw method for savings accounts
+   *
+   * @param amount The amount to withdraw
+   * @throws InsufficientFundsException if there are insufficient funds
+   */
+  @Override
+  public void withdraw(double amount) throws InsufficientFundsException {
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Amount must be positive");
+    }
+    internalWithdraw(amount);
+  }
+
+  /**
    * Internal method to handle withdrawals.
    *
    * @param amount The amount to withdraw
-   * @throws InsufficientFundsException if there are insufficient funds for the withdrawal
-   * @throws IllegalStateException if the account is closed
+   * @throws InsufficientFundsException if there are insufficient funds
    */
   @Override
   public void internalWithdraw(double amount) throws InsufficientFundsException {
@@ -85,11 +115,7 @@ public class CheckingAccount implements Account {
     return balance;
   }
 
-  /**
-   * Closes the account.
-   *
-   * @throws IllegalStateException if the account has a positive balance
-   */
+  /** Closes the account. */
   @Override
   public void closeAccount() throws IllegalStateException {
     if (balance > 0) {
@@ -115,7 +141,7 @@ public class CheckingAccount implements Account {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof CheckingAccount other) {
+    if (obj instanceof SavingsAccount other) {
       return accountNumber.equals(other.accountNumber);
     }
     return false;
@@ -123,7 +149,7 @@ public class CheckingAccount implements Account {
 
   @Override
   public String toString() {
-    return "CheckingAccount{"
+    return "SavingsAccount{"
         + "accountNumber='"
         + accountNumber
         + '\''
