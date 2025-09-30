@@ -104,23 +104,33 @@ function updateGalleryDisplay() {
 function nextImages() {
     const maxSets = Math.ceil(galleryImages.length / imagesPerView);
     
+    // Loop back to beginning when reaching the end
     if (currentGallerySet < maxSets - 1) {
         currentGallerySet++;
-        updateGalleryDisplay();
-        updateGalleryInfo();
-        updateIndicators();
-        updateNavigationButtons();
+    } else {
+        currentGallerySet = 0; // Loop back to start
     }
+    
+    updateGalleryDisplay();
+    updateGalleryInfo();
+    updateIndicators();
+    updateNavigationButtons();
 }
 
 function previousImages() {
+    const maxSets = Math.ceil(galleryImages.length / imagesPerView);
+    
+    // Loop to end when going back from beginning
     if (currentGallerySet > 0) {
         currentGallerySet--;
-        updateGalleryDisplay();
-        updateGalleryInfo();
-        updateIndicators();
-        updateNavigationButtons();
+    } else {
+        currentGallerySet = maxSets - 1; // Loop to last set
     }
+    
+    updateGalleryDisplay();
+    updateGalleryInfo();
+    updateIndicators();
+    updateNavigationButtons();
 }
 
 function goToSet(setIndex) {
@@ -166,14 +176,14 @@ function updateIndicators() {
 function updateNavigationButtons() {
     const prevBtn = document.querySelector('.gallery-prev');
     const nextBtn = document.querySelector('.gallery-next');
-    const maxSets = Math.ceil(galleryImages.length / imagesPerView);
     
+    // Since we now have looping, navigation buttons are never disabled
     if (prevBtn) {
-        prevBtn.disabled = currentGallerySet === 0;
+        prevBtn.disabled = false;
     }
     
     if (nextBtn) {
-        nextBtn.disabled = currentGallerySet >= maxSets - 1;
+        nextBtn.disabled = false;
     }
 }
 
