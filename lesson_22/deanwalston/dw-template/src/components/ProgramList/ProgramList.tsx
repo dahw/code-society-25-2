@@ -1,27 +1,30 @@
 import './ProgramList.scss';
 import React from 'react';
+import {Link} from 'react-router-dom';
+
+import type {Program as ProgramType} from '../../context/ProgramsContext';
 
 import {Program} from '../Program/Program';
 
-interface ProgramData {
-  title: string;
-  description: string;
-}
-
 interface ProgramListProps {
-  programs: ProgramData[];
+  programs: ProgramType[];
 }
 
 export const ProgramList: React.FC<ProgramListProps> = ({programs}) => {
   return (
     <section className="programs-section">
-      <h2>
-        Our <em className="highlight">Programs</em>
-      </h2>
+      <div className="programs-header">
+        <h2>
+          Our <em className="highlight">Programs</em>
+        </h2>
+        <Link to="/add-program" className="add-program-link">
+          Add New Program
+        </Link>
+      </div>
       <ul className="programs">
-        {programs.map((program, index) => (
+        {programs.map(program => (
           <Program
-            key={index}
+            key={program.id}
             title={program.title}
             description={program.description}
           />
