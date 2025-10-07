@@ -4,12 +4,11 @@ import com.codedifferently.lesson23.library.Librarian;
 import com.codedifferently.lesson23.library.Library;
 import com.codedifferently.lesson23.library.MediaItem;
 import com.codedifferently.lesson23.library.search.SearchCriteria;
-import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +16,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/items")
 public class MediaItemsController {
 
   private final Library library;
@@ -34,7 +30,7 @@ public class MediaItemsController {
     this.librarian = library.getLibrarians().stream().findFirst().orElseThrow();
   }
 
-  @GetMapping
+  @GetMapping("/items")
   public ResponseEntity<GetMediaItemsResponse> getItems() {
     Set<MediaItem> items = library.search(SearchCriteria.builder().build());
     List<MediaItemResponse> responseItems = items.stream().map(MediaItemResponse::from).toList();
@@ -42,40 +38,51 @@ public class MediaItemsController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(value = "/{id}")
-  public ResponseEntity<MediaItemResponse> findById(@PathVariable("id") UUID id) {
-    Set<MediaItem> items = library.search(SearchCriteria.builder().id(id.toString()).build());
-    if (items.isEmpty()) {
-      return ResponseEntity.notFound().build();
+  @GetMapping(value = "items/{id}")
+  public ResponseEntity<GetMediaItemsResponse> getItem(@PathVariable String id) {
+    // gets the media items that matches the id
+    Set<MediaItem> items = library.search(SearchCriteria.builder().id(id).build());
+    Optional<MediaItem> mediaItemById = items.stream().findFirst();
+    MediaItemResponse responseItem = null;
+    // if the media exists by the idea return an ok response entity otherwise return not found
+    if (mediaItemById.isPresent()) {
+      responseItem = MediaItemResponse.from(mediaItemById.get());
+      var response = GetMediaItemsResponse.builder().item(responseItem).build();
+      return ResponseEntity.ok(response);
     }
-    MediaItem item = items.iterator().next();
-    MediaItemResponse response = MediaItemResponse.from(item);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.notFound().build();
   }
 
-  @PostMapping
-  public ResponseEntity<CreateMediaItemResponse> create(
-      @Valid @RequestBody CreateMediaItemRequest request) {
-    MediaItem item = MediaItemRequest.asMediaItem(request.getItem());
-    library.addMediaItem(item, librarian);
-    MediaItemResponse response = MediaItemResponse.from(item);
-    var createResponse = CreateMediaItemResponse.builder().item(response).build();
-    return ResponseEntity.ok(createResponse);
-  }
-
-  @DeleteMapping(value = "/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
-    Set<MediaItem> items = library.search(SearchCriteria.builder().id(id.toString()).build());
-    if (items.isEmpty()) {
-      return ResponseEntity.notFound().build();
+  @PostMapping("/items")
+  public ResponseEntity<?> addItem(@RequestBody CreateMediaItemRequest requestItem) {
+    if (requestItem == null || requestItem.getItem() == null) {
+      return ResponseEntity.badRequest().body(Map.of("errors", List.of("item is required")));
     }
-    MediaItem item = items.iterator().next();
     try {
-      library.removeMediaItem(item, librarian);
-      return ResponseEntity.noContent().build();
+      MediaItem mediaItem = MediaItemRequest.asMediaItem(requestItem.getItem());
+      library.addMediaItem(mediaItem, librarian);
+
+      MediaItemResponse itemResponse = MediaItemResponse.from(mediaItem);
+      CreateMediaItemResponse response =
+          CreateMediaItemResponse.builder().item(itemResponse).build();
+      return ResponseEntity.ok(response);
+
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(Map.of("errors", List.of(e.getMessage())));
     } catch (Exception e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.badRequest()
+          .body(Map.of("errors", List.of("An unexpected error occurred")));
     }
+  }
+
+  @DeleteMapping("/items/{id}")
+  public ResponseEntity deleteItem(@PathVariable String id) {
+    Set<MediaItem> items = library.search(SearchCriteria.builder().id(id).build());
+    Optional<MediaItem> mediaItemById = items.stream().findFirst();
+    if (mediaItemById.isPresent()) {
+      library.removeMediaItem(mediaItemById.get(), librarian);
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.notFound().build();
   }
 }
