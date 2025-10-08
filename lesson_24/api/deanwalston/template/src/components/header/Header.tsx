@@ -18,10 +18,7 @@ export const Header: React.FC = () => {
           <a href="#">About</a>
         </li>
         <li>
-          <a href="#">Contact</a>
-        </li>
-        <li>
-          <a href="/programs">Programs</a>
+          <a href="/contact">Contact</a>
         </li>
       </ul>
       <div className="header-cta">
